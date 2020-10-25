@@ -2,12 +2,18 @@ var allTabs = [];
 var browser = chrome;
 
 document.addEventListener('DOMContentLoaded', function() {
-    var link = document.getElementById('test');
-    link.addEventListener('click', function() {
+    var createBookmarkButton = document.getElementById('test');
+    createBookmarkButton.addEventListener('click', function() {
         getTabs(function(tabs){
             allTabs = tabs;
-        });
+        })
+        saveBookmarks("test", allTabs);
     });
+
+    getBookmarks(function(bookmarks){
+        addBookmarksToHTML(bookmarks);
+    }) 
+
 });
 
 function getTabs(callback){
@@ -16,28 +22,27 @@ function getTabs(callback){
     });
 }
 
-function createBookmark(bookmarkName, tabs){
-    browser.storage.sync.set({
-        "multi_bookmarks": 
-        [{
-            "bookmark_name": bookmarkName,
+function saveBookmarks(name, tabs){
+    browser.storage.sync.set({"bookmarks": [
+        {
+            "bookmarkName": name,
             "tabs": tabs
-        }]
-    }, function(){});
+        }
+    ]}, function(){});
 }
 
 function getBookmarks(callback){
-    browser.storage.get(["multi_bookmarks"], function(bookmarks){
-        bookmarkData = JSON.parse(bookmarks)
-        callback(bookmarkData)
+    browser.storage.sync.get(['bookmarks'], function(bookmarks){
+        callback(bookmarks["bookmarks"])
     });
 }
 
-function addBookmarksToHTML(bookmarkData){
-    for(i = 0; i< bookmarkData.length; i++){
+function addBookmarksToHTML(bookmarks){
+    for(i = 0; i < bookmarks.length; i++){
+        console.log(i);
         var bookmarkArea = document.getElementById("Bookmark-Area");
         var button = document.createElement("BUTTON");
-        var buttonText = document.createTextNode(bookmarkData[i].bookmark_name);
+        var buttonText = document.createTextNode(bookmarks[i].bookmarkName);
         button.appendChild(buttonText);
         bookmarkArea.appendChild(button);
     }
