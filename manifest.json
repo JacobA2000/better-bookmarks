@@ -1,0 +1,16 @@
+{
+    "name": "Multi-bookmark",
+    "version": "0.0.1",
+    "description": "Multi-bookmark",
+    "manifest_version": 2,
+
+    "permissions": [
+        "storage",
+        "tabs"
+    ],
+
+    "browser_action": {
+        "default_popup": "popup.html",
+        "default_title": "Multi-bookmark"
+    }
+}
