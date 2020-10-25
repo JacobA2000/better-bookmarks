@@ -1,4 +1,5 @@
 var allTabs = [];
+var userBookmarks = [];
 var browser = chrome;
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -12,8 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     getBookmarks(function(bookmarks){
         addBookmarksToHTML(bookmarks);
-    }) 
-
+        userBookmarks = bookmarks;
+        console.log(userBookmarks)
+    });
 });
 
 function getTabs(callback){
@@ -39,12 +41,33 @@ function getBookmarks(callback){
 
 function addBookmarksToHTML(bookmarks){
     for(i = 0; i < bookmarks.length; i++){
-        console.log(i);
         var bookmarkArea = document.getElementById("Bookmark-Area");
-        var button = document.createElement("BUTTON");
-        var buttonText = document.createTextNode(bookmarks[i].bookmarkName);
-        button.appendChild(buttonText);
-        bookmarkArea.appendChild(button);
+
+        var bookmarkButton = document.createElement("BUTTON");
+        var bookmarkButtonText = document.createTextNode(bookmarks[i].bookmarkName);
+        bookmarkButton.id = bookmarks[i].bookmarkName;
+        bookmarkButton.appendChild(bookmarkButtonText);
+
+        bookmarkButton.addEventListener('click', function() {bookmarkClick(bookmarks, bookmarkButton.id)})
+
+        bookmarkArea.appendChild(bookmarkButton);
     }
+}
+
+
+function bookmarkClick(bookmarks, id){
+    var tabs = [];
+
+    for(i = 0; i < bookmarks.length; i++){
+        if(bookmarks[i].bookmarkName == id){
+            tabs = bookmarks[i].tabs
+            
+            for(i =0; i < tabs.length; i++){
+                chrome.tabs.create({url: tabs[i].url});
+            }
+
+            break;
+        }
+    }    
 }
 
